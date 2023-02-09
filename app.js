@@ -30,17 +30,24 @@ const server = http.createServer((req, res) => {
         });
 
         //.end is fired when there is no more data to read
-        req.on('end', () => {
+        return req.on('end', () => {
             const parsedData = Buffer.concat(body).toString();      //Buffers are temporary storage spots for a chunk of data that is being transferred from one place to another.
             const message = parsedData.split('=')[1];
-            fs.writeFileSync('message.txt', message);
-            console.log(body);
-            console.log(parsedData);
-            console.log(message);
+            
+            //writeFileSync Synchronously executes the process
+            // fs.writeFileSync('message.txt', message);  
+            
+            //For async execution we use writeFile which uses a callback function
+            fs.writeFile('message.txt', message, err => {
+                res.statusCode = 302;       //It is the http response status codes. 300-399 is used for redirection messages. Therefore, a combination of status code and setHeader(location) redirects the page.
+                res.setHeader('Location', '/');
+                return res.end();
+            });  
+
+            // console.log(body);
+            // console.log(parsedData);
+            // console.log(message);
         });
-        res.statusCode = 302;       //It is the http response status codes. 300-399 is used for redirection messages. Therefore, a combination of status code and setHeader(location) redirects the page.
-        res.setHeader('Location', '/');
-        return res.end();
     }
 
     res.setHeader('Content-Type', 'text/html');
@@ -49,7 +56,7 @@ const server = http.createServer((req, res) => {
     res.write('<body>Hii there, this is my first node js server response</body>');
     res.write('</html>');
     res.end();
-})
+});
 
 //The server object listens on port mentioned(5500)
 server.listen(5500);
