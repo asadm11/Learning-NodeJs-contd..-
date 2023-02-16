@@ -10,7 +10,7 @@ router.get('/', (req, res, next) => {
     const products = adminData.products;
 
     //it will use the default templating engine and will return that template
-    res.render('shop', {prods: products, docTitle: 'Shop'});
+    res.render('shop', {prods: products, pageTitle: 'Shop', path:'/shop'} );
     // console.log(adminData.products);
     // res.sendFile(path.join(rootDir, 'Views', 'shop.html'));
     // res.sendFile(path.join(__dirname, '../', 'Views', 'shop.html'));
