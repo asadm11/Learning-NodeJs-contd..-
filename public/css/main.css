@@ -59,6 +59,7 @@ main {
 }
 
 .card {
+  width: 30%;
   box-shadow: 0 2px 8px #00000042;
 }
 
@@ -76,6 +77,7 @@ main {
 
 .card__image {
   width: 100%;
+
 }
 
 .card__image img {

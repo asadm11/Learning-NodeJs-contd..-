@@ -6,6 +6,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 
+//importing handlebars templating engine
+const expressHbs = require('express-handlebars'); 
+
+
 //For serving html pages, we need absolute paths and not relative paths. For this, we require paths module 
 const path = require('path');
 
@@ -13,8 +17,21 @@ const path = require('path');
 //The express module export a function, so, we're calling the express function and storing its return value in the app constant
 const app = express();
 
+
+//unlike pug T.E, hbs are not plugged in, hence, using app.engine, we can create an engine, expressHbs() funciton creates the engine
+app.engine(
+    'hbs', 
+    expressHbs({
+        layoutsDir: 'views/layouts/',
+        defaultLayout: 'main-layout',
+        extname: 'hbs' 
+    })
+);
+app.set('view engine', 'hbs');
+
+
 //compile the dynamic html templates with the pug engine
-app.set('view engine', 'pug');
+// app.set('view engine', 'pug');
 //and where to find the templates
 app.set('views', 'views');
 
