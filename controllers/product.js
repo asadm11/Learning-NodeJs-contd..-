@@ -30,15 +30,17 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  const products = Product.fetchAll();
-  //it will use the default templating engine and will return that template
-  res.render("shop", {
-    prods: products,
-    pageTitle: "Shop",
-    path: "/",
-    hasProducts: products.length > 0,
-    activeShop: true,
+    //passing in a callback function in fetchAll
+  const products = Product.fetchAll((products) => {
+    res.render("shop", {
+      prods: products,
+      pageTitle: "Shop",
+      path: "/",
+      hasProducts: products.length > 0,
+      activeShop: true,
+    });
   });
+  //it will use the default templating engine and will return that template
 
   //for pug file
   // res.render('shop', {prods: products, pageTitle: 'Shop', path:'/shop'} );
