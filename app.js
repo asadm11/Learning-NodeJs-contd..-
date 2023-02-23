@@ -18,9 +18,9 @@ app.set("view engine", "ejs");
 //and where to find the templates
 app.set("views", "views");
 
-// const adminRoutes = require("./Routes/admin");
-const adminData = require("./Routes/admin");
+const adminRoutes = require("./Routes/admin");
 const shopRoutes = require("./Routes/shop");
+const errorController = require("./controllers/error");
 
 app.get("/favicon.ico", (req, res) => res.sendStatus(204));
 
@@ -31,14 +31,10 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //expressjs allows us to have various middleware functions between the request and the response. use method allows us to add a new middleware function. It accepts an array of request handlers. next is a function that allows the user to travel to the next middleware
 //For page filtering/funneling, we can check for path '/admin'
-app.use("/admin", adminData.router);
+app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
-app.use((req, res, next) => {
-  res.status(404).render("404", { pageTitle: "Page Not Found" });
-  // res.status(404).send(`<h1>Page Not Found!`);
-  // res.status(404).sendFile(path.join(__dirname, 'Views', '404.html'));        //__dirname gives the absolute path for the current folder. Using commas we can concatenate the path upto the target file
-});
+app.use(errorController.get404);
 
 //=> The HTTP module creates an HTTP server that listens to server ports and gives a response back to the client. Use the createServer() method to create an HTTP server:whenever a request is made, a callback function is called which includes the request and response as two arguments
 
