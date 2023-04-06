@@ -21,12 +21,16 @@ const getProductsFromFile = cb => {
 };
 
 module.exports = class Product {
-  constructor(t) {
-    this.title = t;
+  constructor(title, imageUrl, description, price) {
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
   }
 
   save() {
     // products.push(this);
+    this.id = Math.random().toString();
     getProductsFromFile(products => {
         products.push(this);
         fs.writeFile(p, JSON.stringify(products), (err) => {
@@ -43,4 +47,11 @@ module.exports = class Product {
     getProductsFromFile(cb);
     // return products;
   }
+
+  static findById(id, cb) {
+    getProductsFromFile(products => {
+      const product = products.find(p => p.id === id);
+      cb(product);
+    });
+  };
 };

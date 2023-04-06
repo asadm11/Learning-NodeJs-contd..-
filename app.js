@@ -25,7 +25,7 @@ const errorController = require("./controllers/error");
 app.get("/favicon.ico", (req, res) => res.sendStatus(204));
 
 //for parsing the information
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 //for linking css files, we have to statically serve them
 app.use(express.static(path.join(__dirname, "public")));
 

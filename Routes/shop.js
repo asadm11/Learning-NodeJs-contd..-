@@ -1,9 +1,17 @@
 const express = require("express");
 
-const productControllers = require("../controllers/product");
+const shopControllers = require("../controllers/shop");
 
 const router = express.Router();
 //use also accepts a path for routing
-router.get("/", productControllers.getProducts);
+router.get("/", shopControllers.getIndex);
+router.get("/products", shopControllers.getProducts);
+//colon tells express that productId is a variable(dynamic)
+//always put dynamic routing after all the static routing
+router.get("/products/:productId", shopControllers.getProduct);
+router.get("/cart", shopControllers.getCart);
+router.post("/cart", shopControllers.postCart);
+router.get("/orders", shopControllers.getOrders);
+router.get("/checkout", shopControllers.getCheckout);
 
 module.exports = router;
