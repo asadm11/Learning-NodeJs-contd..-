@@ -1,47 +1,79 @@
 const Product = require("../models/product");
 
-
 exports.getAddProduct = (req, res, next) => {
-    //for hbs file
-    res.render("admin/add-product", {
-      pageTitle: "Add Product",
-      path: "/admin/add-product",
-      productCSS: true,
-      formCSS: true,
-      activeProduct: true,
-    });
-    //for pug file
-    // res.render('add-product', {pageTitle: 'Add Product', path:'/admin/add-product'});
-  
-    // console.log("This is another middleware!!");
-  
-    //static
-    // res.send(`<form action='/admin/add-product' method='POST'> <input type='text' name='title'> <button type='submit'>Send</button></form>`);
-  
-    //for html
-    // res.sendFile(path.join(rootDir, 'Views', 'add-product.html'))
-  };
-  
-  exports.postAddProduct = (req, res, next) => {
-    // console.log("In another middleware!");
-    // console.log(req.body);
-    const title = req.body.title;
+  res.render("admin/edit-product", {
+    pageTitle: "Add Product",
+    path: "/admin/add-product",
+    editing: false,
+  });
+};
+
+exports.postAddProduct = (req, res, next) => {
+  // console.log("In another middleware!");
+  // console.log(req.body);
+  const title = req.body.title;
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const productId = req.body.id;
-  const product = new Product(title, imageUrl, description, price, productId);
+  const product = new Product(null, title, imageUrl, description, price);
   product.save();
-  res.redirect('/');
-  };
+  res.redirect("/");
+};
 
+exports.getEditProduct = (req, res, next) => {
+  //for hbs file
+  const editMode = req.query.edit;
+  if (!editMode) {
+    return res.redirect("/");
+  }
+  const prodId = req.params.productId;
+  Product.findById(prodId, (product) => {
+    if (!product) {
+      return res.redirect("/");
+    }
+    res.render("admin/edit-product", {
+      pageTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: editMode,
+      product: product,
+    });
+  });
 
-  exports.getProducts = (req, res, next) => {
-    Product.fetchAll((products) => {
-        res.render("admin/products", {
-          prods: products,
-          pageTitle: "Admin Products",
-          path: "/admin/products",
-        });
-      });
-  };
+  //for pug file
+  // res.render('add-product', {pageTitle: 'Add Product', path:'/admin/add-product'});
+
+  // console.log("This is another middleware!!");
+
+  //static
+  // res.send(`<form action='/admin/add-product' method='POST'> <input type='text' name='title'> <button type='submit'>Send</button></form>`);
+
+  //for html
+  // res.sendFile(path.join(rootDir, 'Views', 'add-product.html'))
+};
+
+exports.getProducts = (req, res, next) => {
+  Product.fetchAll((products) => {
+    res.render("admin/products", {
+      prods: products,
+      pageTitle: "Admin Products",
+      path: "/admin/products",
+    });
+  });
+};
+
+exports.postEditProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  const updatedTitle = req.body.title;
+  const updatedImageUrl = req.body.imageUrl;
+  const updatedPrice = req.body.price;
+  const updatedDescription = req.body.description;
+  const updatedProduct = new Product(prodId, updatedTitle, updatedImageUrl, updatedDescription, updatedPrice);
+  updatedProduct.save();
+  res.redirect("/admin/products");
+};
+
+exports.postDeleteProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  Product.deleteById(prodId);
+  res.redirect("/admin/products");
+}
