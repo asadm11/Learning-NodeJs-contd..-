@@ -7,7 +7,6 @@ const bodyParser = require("body-parser");
 
 //For serving html pages, we need absolute paths and not relative paths. For this, we require paths module
 const path = require("path");
-const db = require('./util/database');
 
 //The express module export a function, so, we're calling the express function and storing its return value in the app constant
 const app = express();
@@ -25,20 +24,10 @@ const errorController = require("./controllers/error");
 
 app.get("/favicon.ico", (req, res) => res.sendStatus(204));
 
-db.execute('SELECT * FROM products')
-.then(result => {
-    // console.log(result);
-})
-.catch(err => {
-    console.log(err);
-});
-
-
 //for parsing the information
 app.use(bodyParser.urlencoded({ extended: false }));
 //for linking css files, we have to statically serve them
 app.use(express.static(path.join(__dirname, "public")));
-
 
 //expressjs allows us to have various middleware functions between the request and the response. use method allows us to add a new middleware function. It accepts an array of request handlers. next is a function that allows the user to travel to the next middleware
 //For page filtering/funneling, we can check for path '/admin'
