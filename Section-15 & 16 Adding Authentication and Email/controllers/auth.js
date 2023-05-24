@@ -1,12 +1,21 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs"); //for encrypting passwords
+var nodemailer = require("nodemailer");
+
+const transport = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "549c604dc123b8",
+    pass: "a0f0ccf7d87593"
+  }
+});
 
 exports.getLogin = (req, res, next) => {
-  let message = req.flash('error');
-  if(message.length > 0) {
+  let message = req.flash("error");
+  if (message.length > 0) {
     message = message[0];
-  }
-  else {
+  } else {
     message = null;
   }
   res.render("auth/login", {
@@ -17,11 +26,10 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
-  let message = req.flash('error');
-  if(message.length > 0) {
+  let message = req.flash("error");
+  if (message.length > 0) {
     message = message[0];
-  }
-  else {
+  } else {
     message = null;
   }
   res.render("auth/signup", {
@@ -71,7 +79,7 @@ exports.postSignup = (req, res, next) => {
   User.findOne({ email: email })
     .then((userDoc) => {
       if (userDoc) {
-        req.flash('error', 'Email already exists');
+        req.flash("error", "Email already exists");
         return res.redirect("/signup");
       }
       return bcrypt
@@ -83,12 +91,22 @@ exports.postSignup = (req, res, next) => {
             password: hashedPassword,
             cart: { items: [] },
           });
-          console.log("qw");
           return user.save();
         })
         .then((result) => {
-          console.log("abcd");
           res.redirect("/login");
+          transport.sendMail({
+            from: "shopkart-node@gmail.com",
+            to: email,
+            subject: "Sending Email using Node.js",
+            html: "<h1>Welcome</h1><p>That was easy!</p>",
+          }, function (error, info) {
+            if (error) {
+              console.log(error);
+            } else {
+              console.log("Email sent: " + info.response);
+            }
+          });
         });
     })
 
